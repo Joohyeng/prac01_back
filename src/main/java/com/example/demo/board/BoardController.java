@@ -1,5 +1,6 @@
 package com.example.demo.board;
 
+import com.example.demo.common.model.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.board.model.BoardDto;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class BoardController {
     @GetMapping("/list")
     public ResponseEntity list() {
         List<BoardDto.ListRes> dto = boardService.list();
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(BaseResponse.success(dto));
     }
 
     @GetMapping("/read/{idx}")
@@ -42,7 +43,7 @@ public class BoardController {
     @DeleteMapping("/delete/{idx}")
     public ResponseEntity update(@PathVariable Long idx) {
         boardService.delete(idx);
-        return ResponseEntity.ok("성공");
+        return ResponseEntity.ok(BaseResponse.success("성공"));
     }
 }
 
