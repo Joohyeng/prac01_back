@@ -60,4 +60,9 @@ public class UserDto {
                     .build();
         }
     }
+    public static class BoardRes {
+        private Long idx;
+        private String email;
+        private String name;
+    }
 }
