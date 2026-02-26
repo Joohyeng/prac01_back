@@ -1,24 +1,26 @@
 package com.example.demo.reply;
 
 import com.example.demo.common.model.BaseResponse;
-import com.example.demo.reply.model.ReplyDto;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.user.model.AuthUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
 @RequestMapping("/reply")
-@RequiredArgsConstructor
+@RestController
 public class ReplyController {
-    private final ReplyService replyService;
+    @PostMapping("/reg/{boardIdx}")
+    public ResponseEntity reg(
+            @AuthenticationPrincipal AuthUserDetails user,
+            @PathVariable Long boardIdx) {
 
-    @PostMapping("/reg")
-    public ResponseEntity register(@RequestBody ReplyDto.ReplyregDto dto){
-        ReplyDto.ReplyresDto result = replyService.register(dto);
+        System.out.println(user);
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(
+                BaseResponse.success("성공")
+        );
     }
 }
