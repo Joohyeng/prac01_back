@@ -43,6 +43,7 @@ public class BoardDto {
         private String title;
         private String writer;
         private int replyCount;
+        private int likesCount;
 
         public static ListRes from(Board entity) {
             return ListRes.builder()
@@ -50,6 +51,7 @@ public class BoardDto {
                     .title(entity.getTitle())
                     .writer(entity.getUser().getName())
                     .replyCount(entity.getRlist().size())
+                    .likesCount(entity.getLikesList().size())
                     .build();
         }
     }
@@ -62,6 +64,7 @@ public class BoardDto {
         private String contents;
         private String writer;
         private List<ReplyDto.ReplyresDto> replyList;
+        private int likesCount;
         public static ReadRes from(Board entity) {
             return ReadRes.builder()
                     .idx(entity.getIdx())
@@ -70,6 +73,7 @@ public class BoardDto {
                     .writer(entity.getUser().getName())
                     .replyList(entity.getRlist().stream()
                             .map(ReplyDto.ReplyresDto::from).toList())
+                    .likesCount(entity.getLikesList().size())
                     .build();
         }
     }
