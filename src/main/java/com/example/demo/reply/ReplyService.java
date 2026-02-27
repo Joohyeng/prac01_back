@@ -2,6 +2,7 @@ package com.example.demo.reply;
 
 import com.example.demo.reply.model.Reply;
 import com.example.demo.reply.model.ReplyDto;
+import com.example.demo.user.model.AuthUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReplyService {
     private final ReplyRepository replyRepository;
-    public ReplyDto.ReplyresDto register(ReplyDto.ReplyregDto dto) {
-        Reply entity = replyRepository.save(dto.toEntity());
+    public ReplyDto.ReplyRes reg(AuthUserDetails user, Long boardIdx, ReplyDto.ReplyReq dto) {
+        Reply reply = replyRepository.save(dto.toEntity(user, boardIdx));
 
-        return ReplyDto.ReplyresDto.from(entity);
+        return ReplyDto.ReplyRes.from(reply);
     }
 }

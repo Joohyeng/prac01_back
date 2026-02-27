@@ -1,6 +1,7 @@
 package com.example.demo.board.model;
 
 import com.example.demo.reply.model.ReplyDto;
+import com.example.demo.user.model.AuthUserDetails;
 import com.example.demo.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -14,10 +15,11 @@ public class BoardDto {
         private String title;
         private String contents;
 
-        public Board toEntity() {
+        public Board toEntity(AuthUserDetails user) {
             return Board.builder()
                     .title(this.title)
                     .contents(this.contents)
+                    .user(user.toEntity())
                     .build();
         }
     }
@@ -65,7 +67,7 @@ public class BoardDto {
         private String title;
         private String contents;
         private String writer;
-        private List<ReplyDto.ReplyresDto> replyList;
+        private List<ReplyDto.ReplyRes> replyList;
         private int likesCount;
         public static ReadRes from(Board entity) {
             return ReadRes.builder()
@@ -74,7 +76,7 @@ public class BoardDto {
                     .contents(entity.getContents())
                     .writer(entity.getUser().getName())
                     .replyList(entity.getRlist().stream()
-                            .map(ReplyDto.ReplyresDto::from).toList())
+                            .map(ReplyDto.ReplyRes::from).toList())
                     .likesCount(entity.getLikesList().size())
                     .build();
         }
