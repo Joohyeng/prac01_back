@@ -1,52 +1,41 @@
 package com.example.demo.reply.model;
 
 import com.example.demo.board.model.Board;
-import com.example.demo.board.model.BoardDto;
+import com.example.demo.relation.model.A;
+import com.example.demo.relation.model.ADto;
+import com.example.demo.relation.model.BDto;
+import com.example.demo.user.model.AuthUserDetails;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 public class ReplyDto {
-    public static class ReplyregDto{
+    @Getter
+    public static class ReplyReq {
         private String contents;
 
-        public Reply toEntity(){
+        public Reply toEntity(AuthUserDetails user, Long boardIdx) {
             return Reply.builder()
-                    .contents(this.contents)
-                    .build();
-        }
-
-    }
-    @Getter
-    @Builder
-    public static class ReplyresDto{
-        private Long idx;
-        private String contents;
-        private String writer;
-        private String posttitle;
-
-        public static ReplyresDto from(Reply entity){
-            return ReplyresDto.builder()
-                    .idx(entity.getIdx())
-                    .contents(entity.getContents())
-                    .writer(entity.getUser().getName())
-                    .posttitle(entity.getBoard().getTitle())
+                    .contents(contents)
+                    .board(Board.builder().idx(boardIdx).build())
+                    .user(user.toEntity())
                     .build();
         }
     }
+
     @Builder
     @Getter
-    public static class ListRes {
+    public static class ReplyRes {
         private Long idx;
         private String contents;
         private String writer;
-        private String title;
 
-        public static ReplyDto.ListRes from(Reply entity) {
-            return ListRes.builder()
+        public static ReplyDto.ReplyRes from(Reply entity) {
+            return ReplyRes.builder()
                     .idx(entity.getIdx())
                     .contents(entity.getContents())
                     .writer(entity.getUser().getName())
-                    .title(entity.getBoard().getTitle())
                     .build();
         }
     }
