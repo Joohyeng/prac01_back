@@ -3,6 +3,7 @@ package com.example.demo.upload;
 import com.example.demo.utils.UploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
+@Primary
 public class LocalUploadService implements UploadService{
     private final UploadUtil uploadUtil;
     @Value("${project.upload.path}")
