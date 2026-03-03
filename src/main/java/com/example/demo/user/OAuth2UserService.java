@@ -2,6 +2,7 @@ package com.example.demo.user;
 
 import com.example.demo.user.model.AuthUserDetails;
 import com.example.demo.user.model.User;
+import com.example.demo.user.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,7 +24,8 @@ public class OAuth2UserService
         System.out.println("서비스 코드 실행");
         // OAuth2 로그인 실행
         OAuth2User oAuth2User = super.loadUser(userRequest);
-
+        // 내 서비스의 DTO로 변환
+        UserDto.OAuth dto = UserDto.OAuth.from(oAuth2User.getAttributes(), "kakao");
         Map<String , Object> attributes = oAuth2User.getAttributes();
         String providerId = ((Long)attributes.get("id")).toString();
         System.out.println(providerId);
