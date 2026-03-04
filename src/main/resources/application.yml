@@ -59,18 +59,24 @@ spring:
           auth: true
           timeout: 5000
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    master:
+      driver-class-name: org.mariadb.jdbc.Driver
+      username: ${DB_MASTER_USER}
+      password: ${DB_MASTER_PASS}
+      jdbc-url: ${DB_MASTER_URL}
+    slave:
+      driver-class-name: org.mariadb.jdbc.Driver
+      username: ${DB_MASTER_USER}
+      password: ${DB_MASTER_PASS}
+      jdbc-url: ${DB_SLAVE_URL}
 
-  jpa:
-    database-platform: org.hibernate.dialect.MariaDBDialect
-    hibernate:
-      ddl-auto: update
-    properties:
+    jpa:
+      database-platform: org.hibernate.dialect.MariaDBDialect
       hibernate:
-        format_sql: true
+        ddl-auto: update
+      properties:
+        hibernate:
+          format_sql: true
 
 logging:
   level:
