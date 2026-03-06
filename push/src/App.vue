@@ -1,9 +1,19 @@
 <script setup>
+import {ref} from 'vue'
 import axios from 'axios'
+import {Client} from '@stomp/stompjs'
+
+const message = ref('');
+const roomIdx = ref(0);
+const socket = ref(null);
+const user = ref({
+  email: '',
+  password: ''
+})
 
 const subscribePush = async () => {
   const permission = await Notification.requestPermission()
-  if(permission !== 'granted') {
+  if (permission !== 'granted') {
     console.log("권한 없음")
 
     return
@@ -14,7 +24,7 @@ const subscribePush = async () => {
 
   const registration = await navigator.serviceWorker.ready;
   let subscription = await registration.pushManager.getSubscription()
-  if(!subscription) {
+  if (!subscription) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: VAPID_PUBLIC_KEY
@@ -26,10 +36,49 @@ const subscribePush = async () => {
   }
 
 }
+const connectWebSocket = () => {
+  const ws = new Client(
+        {brokerURL: "ws://localhost:5173/ws"}
+    )
+  socket.value = ws;
+
+   ws.onConnect = () => {
+      console.log("웹 소켓 연결 성공");
+
+
+    }
+     ws.activate()
+}
+const sendMessage = () => {
+  socket.value.publish({
+      destination: '/app/chat/'+roomIdx.value,
+      body: JSON.stringify(message.value)
+    })
+}
+const subscribeRoom = () => {
+  socket.value.subscribe('/topic/'+roomIdx.value, (message) => {
+    console.log(message);
+  })
+ }
+const login = async () => {
+  await axios.post("http://localhost:5173/api/user/login", user.value);
+}
 </script>
 
 <template>
+  <button @click="connectWebSocket">웹 소켓 연결</button>
+  메시지 : <input name="message" v-model="message"/>
+    방번호 : <input name="room" v-model="roomIdx"/>
+  <input name="message" v-model="message" />
+  <button @click="sendMessage">메시지 전송</button>
+  구독할 방번호 : <input name="room" v-model="roomIdx"/>
+    <button @click="subscribeRoom">구독</button>
   <button @click="subscribePush">알림 구독</button>
+
+    <hr>
+      <input name="email" v-model="user.email"/>
+      <input name="password" v-model="user.password"/>
+      <button @click="login">로그인</button>
 </template>
 
 <style scoped></style>

@@ -2,7 +2,6 @@ package com.example.demo.notification;
 
 import com.example.demo.notification.model.NotificationEntity;
 import com.example.demo.notification.model.NotificationDto;
-import lombok.RequiredArgsConstructor;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import nl.martijndwars.webpush.Subscription;
@@ -17,8 +16,8 @@ import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.ExecutionException;
+
 @Service
-@RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final PushService pushService;
@@ -34,6 +33,7 @@ public class NotificationService {
         this.pushService.setPrivateKey("pWhOI-mTyOyx5hogOmKRiYHDCtm_IMpnz1lzWNdMfKU");
         this.pushService.setSubject("우리 사이트이다");
     }
+
     public void subscribe(NotificationDto.Subscribe dto) {
         notificationRepository.save(dto.toEntity());
     }
@@ -51,5 +51,4 @@ public class NotificationService {
         pushService.send(notification);
 
     }
-
 }

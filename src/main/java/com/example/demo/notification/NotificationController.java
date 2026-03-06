@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.concurrent.ExecutionException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/push")
@@ -27,6 +28,7 @@ public class NotificationController {
         notificationService.subscribe(dto);
         return ResponseEntity.ok("성공");
     }
+
     @PostMapping("/send")
     public ResponseEntity send(@RequestBody NotificationDto.Send dto) throws JoseException, GeneralSecurityException, IOException, ExecutionException, InterruptedException {
         notificationService.send(dto);
