@@ -4,6 +4,7 @@ import axios from 'axios'
 import {Client} from '@stomp/stompjs'
 
 const message = ref('');
+const roomIdx = ref(0);
 const socket = ref(null);
 const user = ref({
   email: '',
@@ -52,10 +53,15 @@ const connectWebSocket = () => {
 }
 const sendMessage = () => {
   socket.value.publish({
-      destination: '/app/test',
+      destination: '/app/chat/'+roomIdx.value,
       body: JSON.stringify(message.value)
     })
 }
+const subscribeRoom = () => {
+  socket.value.subscribe('/topic/'+roomIdx.value, (message) => {
+    console.log(message);
+  })
+ }
 const login = async () => {
   await axios.post("http://localhost:5173/api/user/login", user.value);
 }
@@ -63,8 +69,12 @@ const login = async () => {
 
 <template>
   <button @click="connectWebSocket">웹 소켓 연결</button>
+  메시지 : <input name="message" v-model="message"/>
+    방번호 : <input name="room" v-model="roomIdx"/>
   <input name="message" v-model="message" />
   <button @click="sendMessage">메시지 전송</button>
+  구독할 방번호 : <input name="room" v-model="roomIdx"/>
+    <button @click="subscribeRoom">구독</button>
   <button @click="subscribePush">알림 구독</button>
 
     <hr>
