@@ -48,9 +48,13 @@ const connectWebSocket = () => {
         console.log(message);
       })
     }
+     ws.activate()
 }
 const sendMessage = () => {
-  socket.value.send(JSON.stringify(message.value))
+  socket.value.publish({
+      destination: '/app/test',
+      body: JSON.stringify(message.value)
+    })
 }
 const login = async () => {
   await axios.post("http://localhost:5173/api/user/login", user.value);
