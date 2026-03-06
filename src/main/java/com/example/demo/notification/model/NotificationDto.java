@@ -2,6 +2,7 @@ package com.example.demo.notification.model;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class NotificationDto {
                     .build();
         }
     }
+
     @Getter
     public static class Send {
         private Long idx;
