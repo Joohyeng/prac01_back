@@ -1,84 +1,85 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
-import {Client} from '@stomp/stompjs'
+import { Client } from '@stomp/stompjs'
 
-const message = ref('');
-const roomIdx = ref(0);
-const socket = ref(null);
+const message = ref('')
+const roomIdx = ref(0)
+const socket = ref(null)
 const user = ref({
   email: '',
-  password: ''
+  password: '',
 })
 
 const subscribePush = async () => {
   const permission = await Notification.requestPermission()
   if (permission !== 'granted') {
-    console.log("권한 없음")
+    console.log('권한 없음')
 
     return
   }
 
   await navigator.serviceWorker.register('/service-worker.js')
-  const VAPID_PUBLIC_KEY = 'BLHgfPga02L2u89uc4xjhbUFTy_U04rQCjGq7o24oxtqfVmAPHTxOmp6xndSHZtGQpmt7gqTFdMXco2gRNP7_p8'
+  const VAPID_PUBLIC_KEY =
+    'BLHgfPga02L2u89uc4xjhbUFTy_U04rQCjGq7o24oxtqfVmAPHTxOmp6xndSHZtGQpmt7gqTFdMXco2gRNP7_p8'
 
-  const registration = await navigator.serviceWorker.ready;
+  const registration = await navigator.serviceWorker.ready
   let subscription = await registration.pushManager.getSubscription()
   if (!subscription) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: VAPID_PUBLIC_KEY
+      applicationServerKey: VAPID_PUBLIC_KEY,
     })
 
     console.log(JSON.stringify(subscription))
     await axios.post('http://localhost:8080/push/sub', subscription)
-
   }
-
 }
 const connectWebSocket = () => {
-  const ws = new Client(
-        {brokerURL: "ws://localhost:5173/ws"}
-    )
-  socket.value = ws;
+  const ws = new Client({ brokerURL: 'ws://localhost:5173/ws' })
+  socket.value = ws
 
-   ws.onConnect = () => {
-      console.log("웹 소켓 연결 성공");
-
-
-    }
-     ws.activate()
+  ws.onConnect = () => {
+    console.log('웹 소켓 연결 성공')
+  }
+  ws.activate()
 }
 const sendMessage = () => {
   socket.value.publish({
-      destination: '/app/chat/'+roomIdx.value,
-      body: JSON.stringify(message.value)
-    })
+    destination: '/app/chat/' + roomIdx.value,
+    body: JSON.stringify(message.value),
+  })
 }
 const subscribeRoom = () => {
-  socket.value.subscribe('/topic/'+roomIdx.value, (message) => {
-    console.log(message);
+  socket.value.subscribe('/topic/' + roomIdx.value, (message) => {
+    console.log(message)
   })
- }
+}
 const login = async () => {
-  await axios.post("http://localhost:5173/api/user/login", user.value);
+  try {
+    // 도메인을 제거하고 프록시 경로만 사용
+    const response = await axios.post('/api/user/login', user.value)
+    console.log('로그인 성공')
+  } catch (error) {
+    console.error('로그인 에러:', error.response) // 여기서 상세 에러 확인 가능
+  }
 }
 </script>
 
 <template>
   <button @click="connectWebSocket">웹 소켓 연결</button>
-  메시지 : <input name="message" v-model="message"/>
-    방번호 : <input name="room" v-model="roomIdx"/>
+  메시지 : <input name="message" v-model="message" /> 방번호 :
+  <input name="room" v-model="roomIdx" />
   <input name="message" v-model="message" />
   <button @click="sendMessage">메시지 전송</button>
-  구독할 방번호 : <input name="room" v-model="roomIdx"/>
-    <button @click="subscribeRoom">구독</button>
+  구독할 방번호 : <input name="room" v-model="roomIdx" />
+  <button @click="subscribeRoom">구독</button>
   <button @click="subscribePush">알림 구독</button>
 
-    <hr>
-      <input name="email" v-model="user.email"/>
-      <input name="password" v-model="user.password"/>
-      <button @click="login">로그인</button>
+  <hr />
+  <input name="email" v-model="user.email" />
+  <input name="password" v-model="user.password" />
+  <button @click="login">로그인</button>
 </template>
 
 <style scoped></style>
