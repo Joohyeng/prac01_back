@@ -37,7 +37,7 @@ const subscribePush = async () => {
 }
 const connectWebSocket = () => {
   const ws = new Client(
-        {brokerUrl: "ws://localhost:5173/ws"}
+        {brokerURL: "ws://localhost:5173/ws"}
     )
   socket.value = ws;
 
