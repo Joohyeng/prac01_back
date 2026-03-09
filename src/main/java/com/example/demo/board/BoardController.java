@@ -30,6 +30,7 @@ public class BoardController {
     }
 
 
+    @GetMapping("/list")
     public ResponseEntity list(
             @RequestParam(required = true, defaultValue = "0") int page,
             @RequestParam(required = true, defaultValue = "5") int size) {
