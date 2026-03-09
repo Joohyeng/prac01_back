@@ -38,3 +38,7 @@ out/
 
 gradlew*
 .env
+
+*.log
+
+.vite
