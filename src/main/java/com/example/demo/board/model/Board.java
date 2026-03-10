@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import software.amazon.awssdk.annotations.NotNull;
 
 import java.util.List;
 
@@ -21,22 +22,29 @@ public class Board extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
-    @Column(nullable = false,length = 100)
+    @Column(nullable=false, length = 100)
     private String title;
     private String contents;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_idx")
+    private User user;
+
+    @OneToMany(mappedBy = "board")
+    List<Reply> replyList;
+
+    private int likesCount;
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
+    List<Likes> likesList;
 
     public void update(BoardDto.RegReq dto) {
         this.title = dto.getTitle();
         this.contents = dto.getContents();
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_idx")
-    private User user;
+    public void increaseLikesCount() {
+        this.likesCount = this.likesCount+1;
+    }
 
-    @OneToMany(mappedBy = "board",fetch = FetchType.LAZY)
-    private List<Reply> rlist;
-
-    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
-    List<Likes> likesList;
 }
