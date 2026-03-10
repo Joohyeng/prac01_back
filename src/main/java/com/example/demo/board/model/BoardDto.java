@@ -2,7 +2,6 @@ package com.example.demo.board.model;
 
 import com.example.demo.reply.model.ReplyDto;
 import com.example.demo.user.model.AuthUserDetails;
-import com.example.demo.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.data.domain.Page;
@@ -30,8 +29,8 @@ public class BoardDto {
         }
     }
     @Getter
-    @Schema(description = "제목, 제목은 50글자까지만 입력 가능합니다.", required = true, example = "제목01")
     public static class RegReq {
+        @Schema(description = "제목, 제목은 50글자까지만 입력 가능합니다.", required = true, example = "제목01")
         private String title;
         private String contents;
 
@@ -74,7 +73,7 @@ public class BoardDto {
                     .idx(entity.getIdx())
                     .title(entity.getTitle())
                     .writer(entity.getUser().getName())
-                    .replyCount(entity.getRlist().size())
+                    .replyCount(entity.getReplyList().size())
                     .likesCount(entity.getLikesList().size())
                     .build();
         }
@@ -89,15 +88,15 @@ public class BoardDto {
         private String writer;
         private List<ReplyDto.ReplyRes> replyList;
         private int likesCount;
+
         public static ReadRes from(Board entity) {
             return ReadRes.builder()
                     .idx(entity.getIdx())
                     .title(entity.getTitle())
                     .contents(entity.getContents())
                     .writer(entity.getUser().getName())
-                    .replyList(entity.getRlist().stream()
-                            .map(ReplyDto.ReplyRes::from).toList())
-                    .likesCount(entity.getLikesList().size())
+                    .replyList(entity.getReplyList().stream().map(ReplyDto.ReplyRes::from).toList())
+                    .likesCount(entity.getLikesCount())
                     .build();
         }
     }

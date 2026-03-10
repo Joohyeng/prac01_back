@@ -1,6 +1,5 @@
 package com.example.demo.aop;
 
-
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
@@ -13,20 +12,18 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-@Aspect // 관점 : 흩어진 관심사를 하나로 묶은 것
+@Aspect     // 관점 : 흩어진 관심사를 하나로 묶은 것
 @Component
 @RequiredArgsConstructor
-// @Observed
 public class SimpleAop {
     private final Tracer tracer;
 
-    // 실행 될 위치나 시점을 지정
-    //      * return type 지정
-    //      org.example.demo.board.. 해당 패키지 및 하위 모든 패키지
+    // 실행될 위치나 시점을 지정
+    //      * 리턴 타입
+    //      com.example.demo.board.. 해당 패키지 및 하위 모든 패키지
     //      *.*(..) 모든 클래스의 모든 메소드 및 모든 매개변수
     @Pointcut("execution(* com.example.demo.board..*.*(..))")
-    public void cut() {
-        System.out.println("cut");
+    private void cut() {    // 포인트 컷을 적용할 이름을 설정
     }
 
     @Around("cut()")
@@ -35,7 +32,7 @@ public class SimpleAop {
         String className = joinPoint.getSignature().getDeclaringType().getSimpleName();
 
         Span span = tracer.spanBuilder(className + "." + methodName).startSpan();
-        try(Scope scope = span.makeCurrent()) {
+        try (Scope scope = span.makeCurrent()) {
             span.setAttribute("method.name", methodName);
 
             return joinPoint.proceed();
@@ -47,10 +44,10 @@ public class SimpleAop {
         }
     }
 
-    // @Before("execurtion(* com.example.demo.board..*.*(..))") // PointCut을 안만들어두면 이렇게 설정해야함.
+    //    @Before("execution(* com.example.demo.board..*.*(..))") // PointCut을 안만들어두면 이렇게 설정해야 됨
     @Before("cut()") // 포인트 컷에서 지정한 위치의 클래스의 메소드가 실행되기 전에 현재 메소드 실행
     public void before(JoinPoint joinPoint) { // JoinPoint joinPoint : 위치나 시점, 특정 클래스, 특정 메소드라는 정보
-        Method method = ((MethodSignature)joinPoint.getSignature()).getMethod();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         System.out.println(joinPoint.getSignature());
         System.out.println(method.getName() + "메소드 실행 전");
@@ -58,9 +55,11 @@ public class SimpleAop {
 
     @After("cut()") // 포인트 컷에서 지정한 위치의 클래스의 메소드가 실행된 후에 현재 메소드 실행
     public void after(JoinPoint joinPoint) { // JoinPoint joinPoint : 위치나 시점, 특정 클래스, 특정 메소드라는 정보
-        Method method = ((MethodSignature)joinPoint.getSignature()).getMethod();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
 
         System.out.println(joinPoint.getSignature());
-        System.out.println(method.getName() + "메소드 실행 전");
+        System.out.println(method.getName() + "메소드 실행 후");
     }
+
+
 }
