@@ -6,6 +6,8 @@ import com.example.demo.likes.model.Likes;
 import com.example.demo.user.model.AuthUserDetails;
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +48,11 @@ public class LikesService {
 
     // 락을 사용하지 않고 동시성 문제
     //      단순 카운트
+    @Retryable(
+            retryFor = OptimisticLockException.class,
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 50)
+    )
     @Transactional
     public /* synchronized */ void like(AuthUserDetails user, Long boardIdx) {
         Board board = boardRepository.findByIdx(boardIdx).orElseThrow(
