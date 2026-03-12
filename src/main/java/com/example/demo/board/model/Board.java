@@ -35,6 +35,14 @@ public class Board extends BaseEntity {
 
     private int likesCount;
 
+    // 기존에 수정할 때 실행되는 쿼리
+    // UPDATE board SET likes_count = 2 WHERE idx=1;
+    //
+    // 낙관적 락으로 설정한 version과 함께 실행되는 쿼리
+    // UPDATE board SET likes_count = 2, version = version + 1 WHERE idx=1 AND version =1;
+//    @Version
+//    private Long version;
+
     @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     List<Likes> likesList;
 
