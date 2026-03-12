@@ -19,10 +19,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Optional<Board> findByIdWithLock(Long boardIdx);
 
 
-//    @Lock(LockModeType.OPTIMISTIC)
-//    Optional<Board> findByIdx(Long boardIdx);
-
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE Board b SET b.likesCount = b.likesCount + 1 WHERE b.idx=:boardIdx")
-    int increaseLikeCount(Long boardIdx);
+    @Lock(LockModeType.OPTIMISTIC)
+    Optional<Board> findByIdx(Long boardIdx);
 }
